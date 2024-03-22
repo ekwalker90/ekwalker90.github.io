@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Count Bar</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body style="overflow:hidden;"> 
+
+<div class="container" style="width:400px; display:block; margin:0 auto; margin-top:10%;">
+
+<h2><p id="header"></p></h2> 
+    
+    
+<script>
+//INSERT YOUR DRAFT NUMBER HERE
+var draftnumber = "1"
+document.getElementById("header").innerHTML = "Unicorn Hunt Draft " + draftnumber
+</script>
+
+
+<!--<h2>Unicorn Hunt Draft </h2>-->
+
+  <p>Please enter your word counts below.</p> 
+  
+<form onsubmit="return false">
+ Current word count:<br>
+  <input type="text" id="currentwordcount" onchange="getWC()"><br>
+ Goal word count:<br>
+  <input type="text" id="goalwordcount" onchange="getWC()"><br>
+  <br>
+</form>
+
+<script>
+document.getElementById("currentwordcount").value = localStorage.getItem(JSON.stringify("savedWC" + draftnumber))
+document.getElementById("goalwordcount").value = localStorage.getItem(JSON.stringify("savedgoalWC" + draftnumber))
+</script>
+
+<script>
+function addCommas(nStr){
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? ',' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+</script>
+
+<script>
+    function getWC() {
+	var newWC = document.getElementById("currentwordcount").value;
+	var newWC = addCommas(newWC);
+	localStorage.setItem(JSON.stringify("savedWC" + draftnumber), newWC);	
+	document.getElementById("currentwordcount").value = localStorage.getItem(JSON.stringify("savedWC" + draftnumber))
+	var newWC = newWC.replace(",","");
+    var goalWC = document.getElementById("goalwordcount").value;
+	var goalWC = addCommas(goalWC)
+	localStorage.setItem(JSON.stringify("savedgoalWC" + draftnumber), goalWC);
+	document.getElementById("goalwordcount").value = localStorage.getItem(JSON.stringify("savedgoalWC" + draftnumber))
+	var goalWC = goalWC.replace(",","");
+    var WCwidth = Math.round((newWC / goalWC) * 100)
+    //alert(WCwidth);
+    if (WCwidth <= 25) { document.getElementById("finalbar").setAttribute("class","progress-bar progress-bar-danger progress-bar-striped active"); }
+    if (WCwidth > 25 && WCwidth < 50) { document.getElementById("finalbar").setAttribute("class","progress-bar progress-bar-warning progress-bar-striped active"); }
+    if (WCwidth >= 50 && WCwidth < 80) { document.getElementById("finalbar").setAttribute("class","progress-bar progress-bar-striped active"); }
+    if (WCwidth >= 80) { document.getElementById("finalbar").setAttribute("class","progress-bar progress-bar-success progress-bar-striped active"); }
+    document.getElementById("finalbar").style.width = WCwidth + "%";
+    document.getElementById("WCtext").innerHTML = WCwidth + "%";
+    }
+</script>
+
+<div class="container">
+  <div class="progress" style="width:400px;margin-left:-15px;">
+    <div id="finalbar" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"><p id="WCtext"></p>
+    </div>
+  </div>
+</div>
+
+<script>getWC()</script>
+
+</div>
+
+
+</body>
+</html>
